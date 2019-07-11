@@ -42,7 +42,7 @@ private timerComponent: CountdownTimerComponent;
 seconds() { return 0; }
 
 ngAfterViewInit() {
-    // Redefine `seconds()` to get from the `CountdownTimerComponent.seconds` ...
+    // Redefine `seconds()` to get from the **`CountdownTimerComponent**.seconds` ...
     // but wait a tick first to avoid one-time devMode
     // unidirectional-data-flow-violation error
     setTimeout(() => this.seconds = () => this.timerComponent.seconds, 0);
@@ -75,3 +75,39 @@ private doSomething() {
 This component's doSomething() method update's the component's data-bound comment property immediately. There's no need to wait.
 
 Recall that Angular calls both AfterContent hooks before calling either of the AfterView hooks. Angular completes composition of the projected content before finishing the composition of this component's view. There is a small window between the AfterContent... and AfterView... hooks to modify the host view.
+
+
+## Attribute Directives and Structural Directives
+
+There are two other kinds of Angular directives, described extensively elsewhere: (1) components and (2) attribute directives.
+
+A component manages a region of HTML in the manner of a native HTML element. Technically it's a directive with a template.
+
+An attribute directive changes the appearance or behavior of an element, component, or another directive. For example, the built-in NgStyle directive changes several element styles at the same time.
+
+>You can apply many attribute directives to one host element. You can only apply one structural directive to a host element.
+
+
+### Structural Directives
+Structural directives are responsible for HTML layout. They shape or reshape the DOM's structure, typically by adding, removing, or manipulating elements.
+
+The asterisk is "syntactic sugar" for something a bit more complicated. Internally, Angular translates the *ngIf attribute into a \<ng-template> element, wrapped around the host element, like this.
+
+``` html
+<ng-template [ngIf]="hero">
+  <div class="name">{{hero.name}}</div>
+</ng-template>
+```
+
+#### Inside *ngFor
+Angular transforms the *ngFor in similar fashion from asterisk (*) syntax to \<ng-template> element.
+
+``` html
+<div *ngFor="let hero of heroes; let i=index; let odd=odd; trackBy: trackById" [class.odd]="odd">
+  ({{i}}) {{hero.name}}
+</div>
+
+<ng-template ngFor let-hero [ngForOf]="heroes" let-i="index" let-odd="odd" [ngForTrackBy]="trackById">
+  <div [class.odd]="odd">({{i}}) {{hero.name}}</div>
+</ng-template>
+```
