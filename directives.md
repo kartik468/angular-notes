@@ -24,6 +24,12 @@ You enable these features in the string assigned to ngFor, which you write in An
 
 > Everything outside the ngFor string stays with the host element (the \<div>) as it moves inside the \<ng-template>. In this example, the [ngClass]="odd" stays on the \<div>.
 
+*ngFor with trackBy
+
+By default, when you use *ngFor without trackBy, *ngFor tracks array of objects changing through object identity. So, if new reference of array of objects is passed to the directive, even if the array is with the same values, Angular will not be able to detect that they are already drawn and presented in the current DOM. Instead, old elements will be removed and a new collection with the same values will be redrawn.
+
+You can make this more efficient with trackBy. Add a method to the component that returns the value NgFor should track. In this case, that value is the hero's id.
+
 ## MicroSyntax
 
 The Angular microsyntax lets you configure a directive in a compact, friendly string. The microsyntax parser translates that string into attributes on the \<ng-template>:
