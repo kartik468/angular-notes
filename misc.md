@@ -4,6 +4,13 @@ onKey(event: KeyboardEvent) { // with type info
 }
 ```
 
+### The $any() type cast function
+Sometimes a binding expression triggers a type error during AOT compilation and it is not possible or difficult to fully specify the type. To silence the error, you can use the $any() cast function to cast the expression to the any type as in the following example:
+
+```html
+<p>The item's undeclared best by date is: {{$any(item).bestByDate}}</p>
+```
+
 
 ## Abide by the unidirectional data flow rule
 
