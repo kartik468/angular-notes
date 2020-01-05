@@ -2,7 +2,7 @@
 https://angular.io/cli/generate
 
 ### Create app with specific prefix , routing, default style  
-ng new my-app --prefix=my
+ng new my-app --prefix=my --routing --style=scss
 
 
 ### Create a lazy loaded module with routing and put lazy loaded route in app routing module
