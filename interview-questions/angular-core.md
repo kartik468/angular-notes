@@ -28,6 +28,38 @@ The above example would be simplified in TypeScript to:
 constructor(private chatWidget: ChatWidget) { }
 ```
 
+#### Non-class dependencies
+
+Not all dependencies are classes. Sometimes you want to inject a string, function, or object.
+
+Apps often define configuration objects with lots of small facts, like the title of the application or the address of a web API endpoint. These configuration objects aren't always instances of a class. They can be object literals, as shown in the following example.
+
+```typescript
+export const HERO_DI_CONFIG: AppConfig = {
+  apiEndpoint: 'api.heroes.com',
+  title: 'Dependency Injection'
+};
+
+// FAIL! Can't use interface as provider token
+[{ provide: AppConfig, useValue: HERO_DI_CONFIG })]
+
+// FAIL! Can't inject using the interface as the parameter type
+constructor(private config: AppConfig){ }
+
+// solution
+import { InjectionToken } from '@angular/core';
+
+export const APP_CONFIG = new InjectionToken<AppConfig>('app.config');
+// -----------------
+
+providers: [{ provide: APP_CONFIG, useValue: HERO_DI_CONFIG }]
+// -----------------
+
+constructor(@Inject(APP_CONFIG) config: AppConfig) {
+  this.title = config.title;
+}
+```
+
 ### @Injectable()
 
 @Injectable() lets Angular know that a class can be used with the dependency injector.
@@ -383,3 +415,16 @@ the Angular compiler only generates code for components which are reachable from
 In fact, many libraries declare and export components you'll never use. For example, a material design library will export all components because it doesn’t know which ones you will use. However, it is unlikely that you will use them all. For the ones you don't reference, the tree shaker drops these components from the final code package.
 
 If a component isn't an entry component and isn't found in a template, the tree shaker will throw it away. So, it's best to add only the components that are truly entry components to help keep your app as trim as possible.
+
+## Angular moment (ngx-moment)
+
+momentjs wrapper for angular
+
+## If we have 500+ test cases, then how can I execute parallel threads at one time?
+
+A Karma JS plugin to support sharding tests to run in parallel across multiple browsers. Now supporting code coverage!
+https://www.npmjs.com/package/karma-parallel
+
+## Angular event service
+
+https://www.npmjs.com/package/angular-event-service
