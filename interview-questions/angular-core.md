@@ -400,10 +400,10 @@ ngStyle updates styles of the html elements.
 
 ## 10 Entry components (deprecated in Angular 9)
 
-An entry component is any component that Angular loads imperatively, (which means you’re not referencing it in the template), by type.
+An entry component is any component that Angular loads **imperatively**, (which means you’re not referencing it in the template), by type.
 You specify an entry component by bootstrapping it in an NgModule, or including it in a routing definition.
 
-> To contrast the two types of components, there are components which are included in the template, which are declarative. Additionally, there are components which you load imperatively; that is, entry components.
+> To contrast the two types of components, there are components which are included in the template, which are **declarative**. Additionally, there are components which you load imperatively; that is, entry components.
 
 There are two main kinds of entry components:
 
@@ -414,7 +414,7 @@ the Angular compiler only generates code for components which are reachable from
 
 In fact, many libraries declare and export components you'll never use. For example, a material design library will export all components because it doesn’t know which ones you will use. However, it is unlikely that you will use them all. For the ones you don't reference, the tree shaker drops these components from the final code package.
 
-If a component isn't an entry component and isn't found in a template, the tree shaker will throw it away. So, it's best to add only the components that are truly entry components to help keep your app as trim as possible.
+**If a component isn't an entry component and isn't found in a template, the tree shaker will throw it away.** So, it's best to add only the components that are truly entry components to help keep your app as trim as possible.
 
 ## Angular moment (ngx-moment)
 

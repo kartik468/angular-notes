@@ -1,8 +1,13 @@
 What type of forms have u used?
+
 What is template driven forms ?
+
 What is reactive forms ?
+
 What is Reactive forms? Have you created any forms in application ? ng-Form
+
 Can you tell the difference between template driven and reactive forms?
+
 When we should reactive forms and when to use template driven forms?
 
 FormBuilders, Form Groups, FormControls
@@ -77,12 +82,19 @@ Both reactive and template-driven forms share underlying building blocks.
 Like in AngularJS, Angular automatically mirrors many control properties onto the form control element as CSS classes. You can use these classes to style form control elements according to the state of the form. The following classes are currently supported:
 
 .ng-valid
+
 .ng-invalid
-.ng-pending
+
+.ng-pending // this class gets applied when async validator are used and they are not resolved yet
+
 .ng-pristine
+
 .ng-dirty
+
 .ng-untouched
+
 .ng-touched
+
 
 <table>
     <tbody>

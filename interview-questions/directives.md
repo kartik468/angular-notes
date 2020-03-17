@@ -8,7 +8,7 @@ You use Attribute directives when you want to change appearance or behavior of t
 
 There are three kinds of directives in Angular:
 
-1. Components—directives with a template.
+1. Components — directives with a template.
 2. Structural directives—change the DOM layout by adding and removing DOM elements.
 3. Attribute directives—change the appearance or behavior of an element, component, or another directive.
 
