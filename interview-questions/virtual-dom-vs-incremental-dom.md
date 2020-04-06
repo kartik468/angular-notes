@@ -8,6 +8,7 @@ Every component creates a new virtual DOM tree every time it gets rerendered. Re
 Virtual DOM has two main advantages:
 We can use any programming language to implement the component’s render function, so we don’t need to compile anything. React developers mainly uses JSX, but we can use plain JavaScript as well.
 We get a value as a result of rendering component. It can be used for testing, debugging, etc..
+
 Incremental DOM
 Incremental DOM is used internally at Google, and it is defined by this key idea:
 Every component gets compiled into a series of instructions. These instructions create DOM trees and update them in-place when the data changes.

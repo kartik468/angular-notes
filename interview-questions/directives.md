@@ -1,8 +1,10 @@
-What are Attribute Directives? How will you implement event handling in Attribute Directive?
-How to pass parameters to attribute directive?
-Directives for Element ref(@HostListener)
-
 # Directives
+
+What are Attribute Directives? How will you implement event handling in Attribute Directive?
+
+How to pass parameters to attribute directive?
+
+Directives for Element ref(@HostListener)
 
 You use Attribute directives when you want to change appearance or behavior of the DOM element.
 
@@ -18,6 +20,8 @@ Structural Directives change the structure of the view. Two examples are NgFor a
 
 Attribute directives are used as attributes of elements. The built-in NgStyle directive in the Template Syntax guide, for example, can change several element styles at the same time.
 
+## Attribute Directive example
+
 e.g. Highlight directive
 
 ```typescript
@@ -25,7 +29,7 @@ e.g. Highlight directive
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
-    selector: '[appHighlight]'
+    selector: '[appHighlight]',
 })
 export class HighlightDirective {
     constructor(private el: ElementRef) {}
@@ -64,6 +68,45 @@ export class HighlightDirective {
 </p>
 ```
 
+## Structural Directive Example
+
+```typescript
+// src/app/unless.directive.ts (excerpt)
+
+import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+
+/**
+ * Add the template content to the DOM unless the condition is true.
+ */
+@Directive({ selector: '[appUnless]' })
+export class UnlessDirective {
+    private hasView = false;
+
+    constructor(private templateRef: TemplateRef<any>, private viewContainer: ViewContainerRef) {}
+
+    @Input() set appUnless(condition: boolean) {
+        if (!condition && !this.hasView) {
+            this.viewContainer.createEmbeddedView(this.templateRef);
+            this.hasView = true;
+        } else if (condition && this.hasView) {
+            this.viewContainer.clear();
+            this.hasView = false;
+        }
+    }
+}
+```
+
+```html
+<!-- src/app/app.component.html (appUnless) -->
+<p *appUnless="condition" class="unless a">
+    (A) This paragraph is displayed because the condition is false.
+</p>
+
+<p *appUnless="!condition" class="unless b">
+    (B) Although the condition is true, this paragraph is displayed because appUnless is set to false.
+</p>
+```
+
 ## HostListener
 
 The following example declares a directive that attaches a click listener to a button and counts clicks.
@@ -81,7 +124,7 @@ class CountClicks {
 
 @Component({
     selector: 'app',
-    template: '<button counting>Increment</button>'
+    template: '<button counting>Increment</button>',
 })
 class App {}
 ```
@@ -96,7 +139,7 @@ import { HostListener, Component } from '@angular/core';
     template: `
         <h1>Hello, you have pressed keys {{ counter }} number of times!</h1>
         Press any key to increment the counter. <button (click)="resetCounter()">Reset Counter</button>
-    `
+    `,
 })
 class AppComponent {
     counter = 0;

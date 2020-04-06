@@ -9,7 +9,7 @@
         ```typescript
         const evtSource = new EventSource('ssedemo.php');
 
-        evtSource.onmessage = function(event) {
+        evtSource.onmessage = function (event) {
             const newElement = document.createElement('li');
             const eventList = document.getElementById('list');
 
@@ -18,7 +18,7 @@
         };
 
         // error handling
-        evtSource.onerror = function(err) {
+        evtSource.onerror = function (err) {
             console.error('EventSource failed:', err);
         };
 
@@ -32,8 +32,11 @@
     2. using storage api (session storage/ local storage)
 
 3.  Alternative for Dependency Injection
+
     ES6 Modules
+
     What is a module?
+
     A module is just a file. One script is one module.
 
     Modules can load each other and use special directives export and import to interchange functionality, call functions of one module from another one:

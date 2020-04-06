@@ -20,86 +20,116 @@ With these changes, our new RatingInputComponent now looks something like this:
 
 ```typescript
 // rating-input.component.ts
-import { Component, forwardRef, HostBinding, Input } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-    selector: 'rating-input',
-    template: `
-        <span *ngFor="let starred of stars; let i = index" (click)="onTouched(); rate(i + (starred ? (value > i + 1 ? 1 : 0) : 1))">
-            <ng-container *ngIf="starred; else noStar">⭐</ng-container>
-            <ng-template #noStar>·</ng-template>
-        </span>
-    `,
-    styles: [
-        `
-            span {
-                display: inline-block;
-                width: 25px;
-                line-height: 25px;
-                text-align: center;
-                cursor: pointer;
-            }
-        `
-    ],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => RatingInputComponent),
-            multi: true
-        }
-    ]
+  selector: 'kar-rating-component-new',
+  templateUrl: './rating-component-new.component.html',
+  styleUrls: ['./rating-component-new.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RatingComponentNewComponent),
+      multi: true
+    }
+  ]
 })
-export class RatingInputComponent implements ControlValueAccessor {
-    stars: boolean[] = Array(5).fill(false);
+export class RatingComponentNewComponent implements ControlValueAccessor {
+  rating = 0;
 
-    // Allow the input to be disabled, and when it is make it somewhat transparent.
-    @Input() disabled = false;
-    @HostBinding('style.opacity')
-    get opacity() {
-        return this.disabled ? 0.25 : 1;
+  maxRating = 5;
+
+  stars: boolean[] = Array(this.maxRating);
+
+  disabled = false;
+
+  onChange: (rating: number) => {};
+
+  onTouched: () => {};
+
+  constructor() {}
+
+  // ngOnInit() {
+  //   this.setStarsArray();
+  // }
+
+  setStarsArray() {
+    // this.stars = _.fill(Array(this.maxRating), true, 0, this.rating);
+    for (let index = 0; index < this.stars.length; index++) {
+      // const starred = this.stars[index];
+      if (index < this.rating) {
+        this.stars[index] = true;
+      } else {
+        this.stars[index] = false;
+      }
     }
+  }
 
-    // Function to call when the rating changes.
-    onChange = (rating: number) => {};
-
-    // Function to call when the input is touched (when a star is clicked).
-    onTouched = () => {};
-
-    get value(): number {
-        return this.stars.reduce((total, starred) => {
-            return total + (starred ? 1 : 0);
-        }, 0);
-    }
-
-    rate(rating: number) {
-        if (!this.disabled) {
-            this.writeValue(rating);
+  onStarClick(starred: boolean, index: number) {
+    if (!this.disabled) {
+      let newRating: number;
+      const starIndex = index + 1;
+      if (!starred) {
+        newRating = starIndex;
+      } else {
+        if (this.rating > starIndex) {
+          newRating = starIndex;
+        } else {
+          newRating = starIndex - 1;
         }
+      }
+      this.rate(newRating);
     }
+  }
 
-    // Allows Angular to update the model (rating).
-    // Update the model and changes needed for the view here.
-    writeValue(rating: number): void {
-        this.stars = this.stars.map((_, i) => rating > i);
-        this.onChange(this.value);
-    }
+  rate(rating: number) {
+    this.rating = rating;
+    this.setStarsArray();
+    this.onChange(this.rating);
+    this.onTouched();
+  }
 
-    // Allows Angular to register a function to call when the model (rating) changes.
-    // Save the function as a property to call later here.
-    registerOnChange(fn: (rating: number) => void): void {
-        this.onChange = fn;
+  writeValue(rating: number): void {
+    if (!this.disabled) {
+      console.log('writeValue', rating);
+      this.rating = rating;
+      this.setStarsArray();
     }
+  }
 
-    // Allows Angular to register a function to call when the input has been touched.
-    // Save the function as a property to call later here.
-    registerOnTouched(fn: () => void): void {
-        this.onTouched = fn;
-    }
+  registerOnChange(fn: any): void {
+    console.log('registerOnChange');
+    this.onChange = fn;
+  }
 
-    // Allows Angular to disable the input.
-    setDisabledState(isDisabled: boolean): void {
-        this.disabled = isDisabled;
-    }
+  registerOnTouched(fn: any): void {
+    console.log('registerOnTouched');
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+    console.log('setDisabledState');
+  }
 }
+
+```
+
+```html
+<!-- rating-component-new.component.html -->
+<p>rating-component-new works!</p>
+<div [ngClass]="{ disabled: disabled }">
+  <div
+    class="star-container"
+    [attr.tabindex]="0"
+    *ngFor="let star of stars; let i = index"
+    (click)="onStarClick(star, i)"
+    (keydown.enter)="onStarClick(star, i)"
+  >
+    <ng-container *ngIf="star">⭐</ng-container>
+    <ng-container *ngIf="!star">.</ng-container>
+  </div>
+</div>
+
 ```

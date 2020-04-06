@@ -4,6 +4,12 @@ Routing is navigating from one page(component) to another.
 
 ## 1. Lazy loading
 
+How do you combat this problem? With asynchronous routing, which loads feature modules lazily, on request. Lazy loading has multiple benefits.
+
+You can load feature areas only when requested by the user.
+You can speed up load time for users that only visit certain areas of the application.
+You can continue expanding lazy loaded feature areas without increasing the size of the initial load bundle.
+
 ### Lazy loading in angular 7 and below
 
 ``` typescript
@@ -31,6 +37,21 @@ export class AppRoutingModule { }
 ```
 
 ## 2. Route guards
+
+At the moment, any user can navigate anywhere in the application anytime. That's not always the right thing to do.
+
+Perhaps the user is not authorized to navigate to the target component.
+Maybe the user must login (authenticate) first.
+Maybe you should fetch some data before you display the target component.
+You might want to save pending changes before leaving a component.
+You might ask the user if it's OK to discard pending changes rather than save them.
+You add guards to the route configuration to handle these scenarios.
+
+A guard's return value controls the router's behavior:
+
+If it returns true, the navigation process continues.
+If it returns false, the navigation process stops and the user stays put.
+If it returns a UrlTree, the current navigation cancels and a new navigation is initiated to the UrlTree returned.
 
 Here are the 4 types of routing guards available:
 
