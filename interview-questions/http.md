@@ -298,6 +298,24 @@ describe('HttpClient testing', () => {
         httpTestingController.verify();
     });
 
+    // Testing for errors
+    it('can test for 404 error', () => {
+        const emsg = 'deliberate 404 error';
+
+        httpClient.get<Data[]>(testUrl).subscribe(
+            (data) => fail('should have failed with the 404 error'),
+            (error: HttpErrorResponse) => {
+                expect(error.status).toEqual(404, 'status');
+                expect(error.error).toEqual(emsg, 'message');
+            }
+        );
+
+        const req = httpTestingController.expectOne(testUrl);
+
+        // Respond with mock error
+        req.flush(emsg, { status: 404, statusText: 'Not Found' });
+    });
+
     afterEach(() => {
         // After every test, assert that there are no more pending requests.
         httpTestingController.verify();

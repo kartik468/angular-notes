@@ -12,24 +12,24 @@ You can continue expanding lazy loaded feature areas without increasing the size
 
 ### Lazy loading in angular 7 and below
 
-``` typescript
+```typescript
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'lazymodule', loadChildren: './lazymodule/lazymodule.module#LazyModuleModule' }
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'lazymodule', loadChildren: './lazymodule/lazymodule.module#LazyModuleModule' },
 ];
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
 ```
 
 ### Lazy loading in angular 8
 
-``` typescript
+```typescript
 {
   path: 'admin',
   loadChildren: () => import('./admin/admin.module').then(mod => mod.AdminModule),
@@ -59,66 +59,58 @@ Here are the 4 types of routing guards available:
 2. **CanActivateChild**: Controls if children of a route can be activated.
 3. **CanLoad**: Controls if a route can even be loaded. This becomes useful for feature modules that are lazy loaded. They won’t even load if the guard returns false.
 4. **CanDeactivate**: Controls if the user can leave a route. Note that this guard doesn’t prevent the user from closing the browser tab or navigating to a different address. It only prevents actions from within the application itself.
+5. **Resolve** is used to fetch dynamic data before navigating.
 
-``` typescript
+```typescript
 // auth.guard.ts
 import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  Router,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  CanActivateChild,
-  NavigationExtras,
-  CanLoad,
-  Route
-} from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild, NavigationExtras, CanLoad, Route } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-  constructor(private authService: AuthService, private router: Router) {}
+    constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    let url: string = state.url;
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        let url: string = state.url;
 
-    return this.checkLogin(url);
-  }
-
-  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return this.canActivate(route, state);
-  }
-
-  canLoad(route: Route): boolean {
-    let url = `/${route.path}`;
-
-    return this.checkLogin(url);
-  }
-
-  checkLogin(url: string): boolean {
-    if (this.authService.isLoggedIn) {
-      return true;
+        return this.checkLogin(url);
     }
 
-    // Store the attempted URL for redirecting
-    this.authService.redirectUrl = url;
+    canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        return this.canActivate(route, state);
+    }
 
-    // Create a dummy session id
-    let sessionId = 123456789;
+    canLoad(route: Route): boolean {
+        let url = `/${route.path}`;
 
-    // Set our navigation extras object
-    // that contains our global query params and fragment
-    let navigationExtras: NavigationExtras = {
-      queryParams: { session_id: sessionId },
-      fragment: 'anchor'
-    };
+        return this.checkLogin(url);
+    }
 
-    // Navigate to the login page with extras
-    this.router.navigate(['/login'], navigationExtras);
-    return false;
-  }
+    checkLogin(url: string): boolean {
+        if (this.authService.isLoggedIn) {
+            return true;
+        }
+
+        // Store the attempted URL for redirecting
+        this.authService.redirectUrl = url;
+
+        // Create a dummy session id
+        let sessionId = 123456789;
+
+        // Set our navigation extras object
+        // that contains our global query params and fragment
+        let navigationExtras: NavigationExtras = {
+            queryParams: { session_id: sessionId },
+            fragment: 'anchor',
+        };
+
+        // Navigate to the login page with extras
+        this.router.navigate(['/login'], navigationExtras);
+        return false;
+    }
 }
 
 // app-routing.module.ts
@@ -132,37 +124,36 @@ import { PathNotFoundComponent } from './path-not-found/path-not-found.component
 import { LazyLoadParentComponent } from './lazy-loading-comp/lazy-load-parent/lazy-load-parent.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent },
-  { path: 'directives-and-pipes', component: DirectiveAndPipeComponent },
-  { path: 'lazy-load-comp', component: LazyLoadParentComponent },
-  { path: '', pathMatch: 'full', redirectTo: '/home' },
-  {
-    path: 'login',
-    loadChildren: () => import('./login/login.module').then(m => m.LoginModule)
-  },
-  {
-    path: 'admin',
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
-    canLoad: [AuthGuard]
-  },
-  {
-    path: 'rxjs',
-    loadChildren: () => import('./observables/observables.module').then(m => m.ObservablesModule)
-  },
-  { path: '**', component: PathNotFoundComponent }
+    { path: 'home', component: HomeComponent },
+    { path: 'directives-and-pipes', component: DirectiveAndPipeComponent },
+    { path: 'lazy-load-comp', component: LazyLoadParentComponent },
+    { path: '', pathMatch: 'full', redirectTo: '/home' },
+    {
+        path: 'login',
+        loadChildren: () => import('./login/login.module').then((m) => m.LoginModule),
+    },
+    {
+        path: 'admin',
+        loadChildren: () => import('./admin/admin.module').then((m) => m.AdminModule),
+        canLoad: [AuthGuard],
+    },
+    {
+        path: 'rxjs',
+        loadChildren: () => import('./observables/observables.module').then((m) => m.ObservablesModule),
+    },
+    { path: '**', component: PathNotFoundComponent },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
 })
 export class AppRoutingModule {}
-
 ```
 
 ### Can deactivate guard
 
-``` typescript
+```typescript
 // can-deactivate-user.guard.ts
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanDeactivate } from '@angular/router';
@@ -170,19 +161,18 @@ import { Observable } from 'rxjs';
 import { UserComponent } from './user/user.component';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class CanDeactivateUserGuard implements CanDeactivate<UserComponent> {
-  canDeactivate(
-    component: UserComponent,
-    currentRoute: ActivatedRouteSnapshot,
-    currentState: RouterStateSnapshot,
-    nextState?: RouterStateSnapshot
-  ): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    return component.canDeactivate();
-  }
+    canDeactivate(
+        component: UserComponent,
+        currentRoute: ActivatedRouteSnapshot,
+        currentState: RouterStateSnapshot,
+        nextState?: RouterStateSnapshot
+    ): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
+        return component.canDeactivate();
+    }
 }
-
 
 // admin-routing.module.ts
 import { NgModule } from '@angular/core';
@@ -194,32 +184,30 @@ import { UserComponent } from './users/user/user.component';
 import { CanDeactivateUserGuard } from './users/can-deactivate-user.guard';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: AdminComponent,
-    children: [
-      { path: 'users', component: UsersComponent },
-      {
-        path: 'user/:id',
-        component: UserComponent,
-        canDeactivate: [CanDeactivateUserGuard]
-      }
-    ]
-  }
+    {
+        path: '',
+        component: AdminComponent,
+        children: [
+            { path: 'users', component: UsersComponent },
+            {
+                path: 'user/:id',
+                component: UserComponent,
+                canDeactivate: [CanDeactivateUserGuard],
+            },
+        ],
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
 })
 export class AdminRoutingModule {}
-
-
 ```
 
 ## 3.Resolve Guard (Fetch data before navigating)
 
-``` typescript
+```typescript
 // crisis-center/crisis-detail-resolver.service.ts
 import { Injectable } from '@angular/core';
 import { Router, Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
@@ -230,27 +218,27 @@ import { CrisisService } from './crisis.service';
 import { Crisis } from './crisis';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class CrisisDetailResolverService implements Resolve<Crisis> {
-  constructor(private cs: CrisisService, private router: Router) {}
+    constructor(private cs: CrisisService, private router: Router) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Crisis> | Observable<never> {
-    let id = route.paramMap.get('id');
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Crisis> | Observable<never> {
+        let id = route.paramMap.get('id');
 
-    return this.cs.getCrisis(id).pipe(
-      take(1),
-      mergeMap(crisis => {
-        if (crisis) {
-          return of(crisis);
-        } else {
-          // id not found
-          this.router.navigate(['/crisis-center']);
-          return EMPTY;
-        }
-      })
-    );
-  }
+        return this.cs.getCrisis(id).pipe(
+            take(1),
+            mergeMap((crisis) => {
+                if (crisis) {
+                    return of(crisis);
+                } else {
+                    // id not found
+                    this.router.navigate(['/crisis-center']);
+                    return EMPTY;
+                }
+            })
+        );
+    }
 }
 
 // crisis-center-routing.module.ts (resolver)
@@ -266,80 +254,76 @@ import { CanDeactivateGuard } from '../can-deactivate.guard';
 import { CrisisDetailResolverService } from './crisis-detail-resolver.service';
 
 const crisisCenterRoutes: Routes = [
-  {
-    path: '',
-    component: CrisisCenterComponent,
-    children: [
-      {
+    {
         path: '',
-        component: CrisisListComponent,
+        component: CrisisCenterComponent,
         children: [
-          {
-            path: ':id',
-            component: CrisisDetailComponent,
-            canDeactivate: [CanDeactivateGuard],
-            resolve: {
-              crisis: CrisisDetailResolverService
-            }
-          },
-          {
-            path: '',
-            component: CrisisCenterHomeComponent
-          }
-        ]
-      }
-    ]
-  }
+            {
+                path: '',
+                component: CrisisListComponent,
+                children: [
+                    {
+                        path: ':id',
+                        component: CrisisDetailComponent,
+                        canDeactivate: [CanDeactivateGuard],
+                        resolve: {
+                            crisis: CrisisDetailResolverService,
+                        },
+                    },
+                    {
+                        path: '',
+                        component: CrisisCenterHomeComponent,
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(crisisCenterRoutes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(crisisCenterRoutes)],
+    exports: [RouterModule],
 })
 export class CrisisCenterRoutingModule {}
-
 ```
 
 ## 4. Navigation using Router Link directive.
 
-``` html
+```html
 <h3>ADMIN</h3>
 <nav>
-  <a routerLink="./" routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
-  <a routerLink="./crises" routerLinkActive="active">Manage Crises</a>
-  <a routerLink="./heroes" routerLinkActive="active">Manage Heroes</a>
+    <a routerLink="./" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+    <a routerLink="./crises" routerLinkActive="active">Manage Crises</a>
+    <a routerLink="./heroes" routerLinkActive="active">Manage Heroes</a>
 </nav>
 <router-outlet></router-outlet>
 ```
 
 ## 5. Navigation using Router Service
 
-``` typescript
+```typescript
 // eg 1
 
 // Set our navigation extras object
 // that contains our global query params and fragment
 let navigationExtras: NavigationExtras = {
     queryParams: { session_id: sessionId },
-    fragment: 'anchor'
+    fragment: 'anchor',
 };
 
 // Navigate to the login page with extras
 this.router.navigate(['/login'], navigationExtras);
-
 
 // eg 2
 // Set our navigation extras object
 // that passes on our global query params and fragment
 let navigationExtras: NavigationExtras = {
     queryParamsHandling: 'preserve',
-    preserveFragment: true
+    preserveFragment: true,
 };
 
 // Redirect the user
 this.router.navigate([redirectUrl], navigationExtras);
-
 
 // eg 3
 let crisisId = this.crisis ? this.crisis.id : null;
@@ -349,19 +333,17 @@ let crisisId = this.crisis ? this.crisis.id : null;
 // Relative navigation back to the crises
 this.router.navigate(['../', { id: crisisId, foo: 'foo' }], { relativeTo: this.route });
 
-
 // eg 4
 let heroId = hero ? hero.id : null;
 // Pass along the hero id if available
 // so that the HeroList component can select that hero.
 // Include a junk 'foo' property for fun.
 this.router.navigate(['/superheroes', { id: heroId, foo: 'foo' }]);
-
 ```
 
 ## 6. ActivatedRoute to extract params, query params, fragments, data
 
-``` typescript
+```typescript
 constructor(
     private route: ActivatedRoute,
     private router: Router,

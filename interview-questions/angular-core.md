@@ -314,7 +314,7 @@ platformBrowserDynamic()
 
 ## 7. can we change the main.ts file to something else and how?
 
-Yes. Change it in angular.json file
+Yes. by changing the value of property main in angular.json file.
 
 ## 8. View child and content child
 
