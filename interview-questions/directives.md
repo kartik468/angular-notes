@@ -152,3 +152,32 @@ class AppComponent {
     }
 }
 ```
+
+
+## HostListener and HostBinding example
+reference: https://www.digitalocean.com/community/tutorials/angular-hostbinding-hostlistener#:~:text=%40HostBinding%20and%20%40HostListener%20are%20two,the%20host%20element%20or%20component.
+
+```typescript
+import {
+  Directive,
+  HostBinding,
+  HostListener } from '@angular/core';
+
+@Directive({
+  selector: '[appRainbow]'
+})
+export class RainbowDirective {
+  possibleColors = [
+    'darksalmon', 'hotpink', 'lightskyblue', 'goldenrod', 'peachpuff',
+    'mediumspringgreen', 'cornflowerblue', 'blanchedalmond', 'lightslategrey'
+  ];
+  @HostBinding('style.color') color: string;
+  @HostBinding('style.border-color') borderColor: string;
+  @HostListener('keydown') newColor() {
+    const colorPick = Math.floor(Math.random() * this.possibleColors.length);
+this.color = this.borderColor = this.possibleColors[colorPick];
+```
+
+```html
+<input type="text" appRainbow>
+```
